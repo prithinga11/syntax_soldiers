@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MoneyMood – Your Future, Your Money</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="brand">
+      <span class="logo"><i data-lucide="wallet"></i></span>
+      <div>
+        <h1>MoneyMood</h1>
+        <p>Your Future, Your Money</p>
+      </div>
+    </div>
+    <nav>
+      <a href="#dashboard">Dashboard</a>
+      <a href="#future">Future Me</a>
+      <a href="#expenses">Expenses</a>
+      <a href="#goals">Goals</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-text">
+        <h2>Make money <span>make sense.</span></h2>
+        <p>Track what you spend, plan what you save, and meet your future self before you decide.</p>
+      </div>
+      <div class="hero-inputs">
+        <label class="income-edit">
+          <span>Monthly income (₹)</span>
+          <input type="number" id="incomeInput" min="0" step="100" />
+        </label>
+        <label class="income-edit">
+          <span>Monthly savings (₹)</span>
+          <input type="number" id="savingsInput" min="0" step="100" />
+        </label>
+      </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="dashboard">
+      <div class="stats">
+        <div class="stat">
+          <span class="ico"><i data-lucide="trending-up"></i></span>
+          <p>Monthly Income</p>
+          <h3 id="statIncome">₹0</h3>
+        </div>
+        <div class="stat">
+          <span class="ico red"><i data-lucide="credit-card"></i></span>
+          <p>Total Expenses</p>
+          <h3 id="statExpenses">₹0</h3>
+        </div>
+        <div class="stat">
+          <span class="ico green"><i data-lucide="piggy-bank"></i></span>
+          <p>Monthly Savings</p>
+          <h3 id="statSavings">₹0</h3>
+        </div>
+        <div class="stat highlight">
+          <span class="ico white"><i data-lucide="banknote"></i></span>
+          <p>Remaining Balance</p>
+          <h3 id="statRemaining">₹0</h3>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><h3>Spending Breakdown</h3></div>
+          <div class="chart-wrap"><canvas id="spendChart"></canvas></div>
+          <p class="empty" id="chartEmpty" hidden>No expenses yet. Add one below.</p>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Recent Transactions</h3></div>
+          <ul id="txList" class="tx-list"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- FUTURE ME -->
+    <section id="future" class="card future">
+      <div class="card-head wrap">
+        <div>
+          <h3><i data-lucide="sparkles"></i> Future Me — Financial Decision Simulator</h3>
+          <p class="sub">Move the sliders. Watch your future change.</p>
+        </div>
+        <div class="btn-row">
+          <button class="btn ghost" id="syncBtn" type="button"><i data-lucide="refresh-cw"></i> Sync from dashboard</button>
+          <button class="btn" id="applyBtn" type="button"><i data-lucide="check"></i> Apply income &amp; savings</button>
+        </div>
+      </div>
+
+      <div class="future-grid">
+        <div class="sliders">
+          <div class="slider-row">
+            <label for="sIncome">Monthly income <b id="vIncome"></b></label>
+            <input type="range" id="sIncome" min="0" max="200000" step="500" />
+          </div>
+          <div class="slider-row">
+            <label for="sShopping">Shopping expenses <b id="vShopping"></b></label>
+            <input type="range" id="sShopping" min="0" max="50000" step="100" />
+          </div>
+          <div class="slider-row">
+            <label for="sOther">Other expenses <b id="vOther"></b></label>
+            <input type="range" id="sOther" min="0" max="100000" step="100" />
+          </div>
+          <div class="slider-row">
+            <label for="sSavings">Monthly savings <b id="vSavings"></b></label>
+            <input type="range" id="sSavings" min="0" max="100000" step="100" />
+          </div>
+          <div class="slider-row extra">
+            <label for="sExtra">What if I save extra each month? <b id="vExtra"></b></label>
+            <input type="range" id="sExtra" min="0" max="20000" step="100" />
+          </div>
+        </div>
+
+        <div class="results">
+          <div class="remaining" id="simRemainingBox">
+            <p>Remaining balance / month</p>
+            <h2 id="simRemaining">₹0</h2>
+            <small id="simWarn"></small>
+          </div>
+          <div class="proj">
+            <div><p>Monthly savings</p><h4 id="pMonthly">₹0</h4></div>
+            <div><p>After 3 months</p><h4 id="p3">₹0</h4></div>
+            <div><p>After 6 months</p><h4 id="p6">₹0</h4></div>
+            <div><p>After 12 months</p><h4 id="p12">₹0</h4></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="compare">
+        <div class="chart-wrap short"><canvas id="futureChart"></canvas></div>
+        <div class="compare-text">
+          <h4>Extra saving impact</h4>
+          <p id="compareMsg"></p>
+          <div class="compare-nums">
+            <div><span>12 months now</span><b id="cBase">₹0</b></div>
+            <div><span>12 months with extra</span><b id="cExtra">₹0</b></div>
+            <div class="gain"><span>You gain</span><b id="cGain">₹0</b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPENSES + GOALS -->
+    <div class="grid-2">
+      <section id="expenses" class="card">
+        <div class="card-head"><h3><i data-lucide="plus-circle"></i> Add Expense</h3></div>
+        <form id="expenseForm" novalidate>
+          <label>Expense name
+            <input type="text" id="expName" placeholder="e.g. Groceries" maxlength="40" />
+          </label>
+          <label>Amount (₹)
+            <input type="number" id="expAmount" placeholder="e.g. 850" min="0" step="1" />
+          </label>
+          <label>Category
+            <select id="expCategory">
+              <option>Food</option>
+              <option>Shopping</option>
+              <option>Transport</option>
+              <option>Bills</option>
+              <option>Entertainment</option>
+              <option>Health</option>
+              <option>Other</option>
+            </select>
+          </label>
+          <p class="error" id="expError"></p>
+          <button class="btn full" type="submit"><i data-lucide="plus"></i> Add expense</button>
+        </form>
+      </section>
+
+      <section id="goals" class="card">
+        <div class="card-head"><h3><i data-lucide="target"></i> Savings Goals</h3></div>
+        <form id="goalForm" class="goal-form" novalidate>
+          <input type="text" id="goalName" placeholder="Goal (e.g. New laptop)" maxlength="40" />
+          <input type="number" id="goalTarget" placeholder="Target ₹" min="0" />
+          <input type="number" id="goalCurrent" placeholder="Saved so far ₹" min="0" />
+          <button class="btn" type="submit"><i data-lucide="plus"></i> Add</button>
+        </form>
+        <p class="error" id="goalError"></p>
+        <div id="goalList"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer>MoneyMood · Your data is saved in this browser only.</footer>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
